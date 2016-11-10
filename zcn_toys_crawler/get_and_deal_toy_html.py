@@ -118,11 +118,14 @@ def baseInfo(soup, line):
 
 def productRak(soup, line):
 	rank = soup.find(id = "SalesRank")
-	[x.extract() for x in rank.findAll('a')]
-	[x.extract() for x in rank.findAll('script')]
-	[x.extract() for x in rank.findAll('style')]
-	[x.extract() for x in rank.findAll('ul')]
-	line.append(rank.get_text().strip())
+	if rank:
+		[x.extract() for x in rank.findAll('a')]
+		[x.extract() for x in rank.findAll('script')]
+		[x.extract() for x in rank.findAll('style')]
+		[x.extract() for x in rank.findAll('ul')]
+		line.append(rank.get_text().strip())
+	else :
+		line.append("")
 	return line
 
 def savePic(soup, cu_count):
@@ -146,6 +149,7 @@ for i in links_set:
 		log_file.write(txt)
 		pass_link.write(i)
 		pass_count = pass_count + 1
+		print "pass"
 		continue
 	soup = BeautifulSoup(txt, 'html.parser')
 	line = []
