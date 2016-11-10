@@ -165,7 +165,7 @@ for i in links_set:
 	line.append(i)
 	writer.writerow(line)
 	cu_count = cu_count + 1
-	time.sleep(2)
+	time.sleep(1)
 
 result = "pass number : " + str(pass_count)
 print result
