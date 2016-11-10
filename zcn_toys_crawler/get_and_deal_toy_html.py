@@ -4,13 +4,14 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 import urllib2
+import urllib
 from bs4 import *
 import bs4
 import csv
 import codecs
 import time
 
-fout = file("list.test", 'r')
+fout = file("toy_list.txt", 'r')
 csvfile = file('toys.csv', 'wb')
 log_file = file('n_normal.log', 'w')
 pass_link = file('pass_link.txt', 'w')
@@ -18,6 +19,7 @@ csvfile.write(codecs.BOM_UTF8)
 writer = csv.writer(csvfile)
 links_set = fout.readlines()
 pass_count = 0
+cu_count = 0
 
 def normalTag(soup, line, tag):
 	divs = soup.findAll(id = tag)
@@ -123,6 +125,12 @@ def productRak(soup, line):
 	line.append(rank.get_text().strip())
 	return line
 
+def savePic(soup, cu_count):
+	pic = soup.find(id = "imgTagWrapperId")
+	pic_h = pic.findAll('img')[0]['src']
+	file_name = "./img/" + str(cu_count) + ".jpg"
+	urllib.urlretrieve(pic_h, file_name)
+
 
 
 for i in links_set:
@@ -141,6 +149,7 @@ for i in links_set:
 		continue
 	soup = BeautifulSoup(txt, 'html.parser')
 	line = []
+	line.append(str(cu_count))
 	#***************#
 	productName(soup, line)
 	productBrand(soup, line)
@@ -152,11 +161,15 @@ for i in links_set:
 	offerDescription(soup, line)
 	baseInfo(soup, line)
 	productRak(soup, line)
+	savePic(soup, cu_count)
 	line.append(i)
 	writer.writerow(line)
+	cu_count = cu_count + 1
 	time.sleep(2)
 
-print "pass number : " + str(pass_count)
+result = "pass number : " + str(pass_count)
+print result
+log_file.write(result)
 
 fout.close()
 csvfile.close()

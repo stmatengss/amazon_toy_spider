@@ -9,6 +9,7 @@ import bs4
 import csv
 import codecs
 import re
+import urllib
 
 log_file = file("test.log", "w")
 
@@ -69,12 +70,19 @@ for li in lists:
 '''
 
 # 获得排名
+'''
 rank = soup.find(id = "SalesRank")
 [x.extract() for x in rank.findAll('a')]
 [x.extract() for x in rank.findAll('script')]
 [x.extract() for x in rank.findAll('style')]
 [x.extract() for x in rank.findAll('ul')]
 print rank.get_text().strip()
+'''
+# 获取图片
+pic = soup.find(id = "imgTagWrapperId")
+pic_h = pic.findAll('img')[0]['src']
+print pic_h
+urllib.urlretrieve("http://www.gunnerkrigg.com//comics/00000001.jpg", "00000001.jpg")
 
 # 逐条获得基本信息
 #totalDes = soup.find(id = "productDescription_feature_div")
