@@ -9,16 +9,20 @@ import bs4
 import csv
 import codecs
 
-fout = file("list", 'r')
+fout = file("toylist.txt", 'r')
 csvfile = file('toys.csv', 'wb')
 csvfile.write(codecs.BOM_UTF8)
 writer = csv.writer(csvfile)
 
 get_list = [
 	u'productTitle',
-	u'brand'
+	u'brand',
+	u'avgRating',
 	u'acrCustomerReviewText',
 	u'priceblock_ourprice',
+	u'imgTagWrapperId',
+	u'productDescription',
+	
 	u'ddmMerchantMessage'
 ]
 
