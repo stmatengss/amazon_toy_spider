@@ -47,6 +47,9 @@ def reviewNumber(soup, line):
 
 def recoPrice(soup, line):
 	price_re = soup.find(id = "price")
+	if price_re is None:
+		line.append("")
+		return line
 	price_t = price_re.findAll('table')
 	for row in price_t:
 		cols = row.find_all('td')
@@ -75,6 +78,9 @@ def priceSale(soup ,line):
 
 def productDescription(soup, line):
 	totalDes = soup.find(id = "productDescription_feature_div")
+	if totalDes is None:
+		line.append("")
+		return line
 	[x.extract() for x in totalDes.findAll('script')]
 	[x.extract() for x in totalDes.findAll('style')]
 	h2 = totalDes.findAll('div', class_='disclaim')
@@ -85,7 +91,19 @@ def productDescription(soup, line):
 		line.append("")
 	subTitles = totalDes.findAll('h3')
 	for title in subTitles:
-		line.append(title.get_text().strip() + title.next_sibling.next_sibling.get_text().strip())
+		title_str = ""
+		content_str = ""
+		try:
+			title_str = title.get_text().strip()
+			#line.append(title.get_text().strip() + title.next_sibling.next_sibling.get_text().strip())
+		except:
+			pass
+		try:
+			content_str = title.next_sibling.next_sibling.get_text().strip()
+		except:
+			pass
+		line.append(title_str + content_str)
+			
 	return line
 
 def offerDescription(soup, line):
@@ -104,16 +122,19 @@ def offerDescription(soup, line):
 
 def baseInfo(soup, line):
 	descript = soup.find(id = "detail_bullets_id")
-	[x.extract() for x in descript.findAll('script')]
-	[x.extract() for x in descript.findAll('style')]
-	lists = descript.findAll('li')
-	for li in lists:
-		try:
-			line.append(li.get_text().strip())
-			if str(li.get_text()).find("产地") > -1 :
-				break
-		except:
-			pass
+	if descript:
+		[x.extract() for x in descript.findAll('script')]
+		[x.extract() for x in descript.findAll('style')]
+		lists = descript.findAll('li')
+		for li in lists:
+			try:
+				line.append(li.get_text().strip())
+				if str(li.get_text()).find("产地") > -1 :
+					break
+			except:
+				pass
+	else:
+		line.append("")
 	return line
 
 def productRak(soup, line):
@@ -130,9 +151,10 @@ def productRak(soup, line):
 
 def savePic(soup, cu_count):
 	pic = soup.find(id = "imgTagWrapperId")
-	pic_h = pic.findAll('img')[0]['src']
-	file_name = "./img/" + str(cu_count) + ".jpg"
-	urllib.urlretrieve(pic_h, file_name)
+	if pic:
+		pic_h = pic.findAll('img')[0]['src']
+		file_name = "./img/" + str(cu_count) + ".jpg"
+		urllib.urlretrieve(pic_h, file_name)
 
 
 
