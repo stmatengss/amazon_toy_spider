@@ -13,20 +13,6 @@ fout = file("douban_list_new.txt", 'w')
 log_file = file("douban_list.log", 'w')
 links_set = set()
 
-# for i in range(1,300):
-# 	print url_preffix1.format(i)
-# 	opener = urllib2.build_opener()
-# 	opener.addheaders = [('User-agent', 'Mozilla/5.0')]
-# 	html = opener.open(url_preffix1.format(i))
-# 	# html = urllib2.urlopen(url_preffix1.format(i))
-# 	txt = html.read()
-# 	if i % 20 == 0:
-# 		print (i/20)
-# 	soup = BeautifulSoup(txt, 'html.parser')
-# 	links = soup.findAll("a", class_='a-link-normal s-access-detail-page  a-text-normal')
-# 	for j in links:
-# 		if j['href'] not in links_set:
-# 			links_set.add(j['href'])
 
 for url_preffix in url_list:
     for i in range(0,98):
