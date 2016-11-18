@@ -12,11 +12,11 @@ import codecs
 import time
 import re
 
-fout = file("test_list.txt", 'r')
+fout = file("douban_list_new.txt", 'r')
 links_set = fout.readlines()
-csvfile = file('douban_book.csv', 'wb')
-log_file = file('douban_book.log', 'w')
-pass_link = file('pass_link.txt', 'w')
+csvfile = file('douban_book_new.csv', 'wb')
+log_file = file('douban_book_new.log', 'w')
+pass_link = file('pass_link_new.txt', 'w')
 csvfile.write(codecs.BOM_UTF8)
 writer = csv.writer(csvfile)
 pass_count = 0
@@ -48,7 +48,7 @@ def getCountry(name):
         return country
 
 def getCountry1(name):
-	pattern = re.compile(r'\((.+)\)')
+	pattern = re.compile(r'\((.+?)\)')
 	match = pattern.match(name)
 	if match:
 		return match.group(1)
@@ -56,7 +56,7 @@ def getCountry1(name):
 		return ""
 
 def getCountry2(name):
-	pattern = re.compile(r'\[(.+)\]')
+	pattern = re.compile(r'\[(.+?)\]')
 	match = pattern.match(name)
 	if match:
 		return match.group(1)
@@ -64,28 +64,28 @@ def getCountry2(name):
 		return ""
 
 def getAuthor(info):
-	name = info.find(text=' 作者')
-	try:
-		t_span = name.parent.parent
-    	item = t_span.findAll('a')
+    name = info.find(text=' 作者')
+    try:
+        t_span = name.parent.parent
+        item_s = t_span.findAll('a')
     	list_t = []
-    	for i in item:
+    	for i in item_s:
     		 list_t.append(i.get_text())
         return ",".join(list_t)
-	except:
-		return ""
+    except:
+        return ""
 
 def getTranslator(info):
-	name = info.find(text=' 译者')
-	try:
+    name = info.find(text=' 译者')
+    try:
         t_span = name.parent.parent
-    	item = t_span.findAll('a')
-    	list_t = []
-    	for i in item:
-    		 list_t.append(i.get_text())
-        return ",".join(list_t)
-	except:
-		return ""
+        item_s = t_span.findAll('a')
+        list_t = []
+        for i in item_s:
+            list_t.append(i.get_text())
+            return ",".join(list_t)
+    except:
+        return ""
 
 def getPublication(info):
 	pub = info.find(text='出版社:')
@@ -218,7 +218,9 @@ def write2line(lines_map):
 for i in links_set:
     print "------------------------------------"
     print i
+    log_file.write(i)
     txt = ""
+    '''
     try:
         opener = urllib2.build_opener()
         opener.addheaders = [('User-agent', 'Mozilla/5.0')]
@@ -230,6 +232,21 @@ for i in links_set:
         pass_count = pass_count + 1
         print "pass"
         continue
+    '''
+    interv = 0
+    while(True):
+        time.sleep(interv)
+        try:
+            opener = urllib2.build_opener()
+            opener.addheaders = [('User-agent', 'Mozila/5.0')]
+            html = opener.open(i)
+            txt = html.read()
+            break
+        except:
+            interv = interv * 2 + 1
+            log_file.write("waite interval " + str(interv))
+            pass_link.write(i)
+            pass
     soup = BeautifulSoup(txt, 'html.parser')
     line_map = initMap()
     getinfo(soup, line_map)
@@ -238,7 +255,7 @@ for i in links_set:
     line_map[contents_need[4]] = getRatingPeople(soup)
     line_map[contents_need[27]] = getAuthorIntro(soup)
     line_map[contents_need[28]] = getRating(soup)
-    #getPic(soup, line_map[contents_need[0]])
+    getPic(soup, line_map[contents_need[0]])
     line = write2line(line_map)
     line.append(i)
     writer.writerow(line)
