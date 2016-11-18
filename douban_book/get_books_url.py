@@ -1,4 +1,5 @@
 import urllib2
+import time
 from bs4 import *
 import bs4
 
@@ -20,10 +21,18 @@ for url_preffix in url_list:
         page = i * 20
         log = url_preffix.format(page)
         print(log)
-        opener = urllib2.build_opener()
-        opener.addheaders = [('User-agent', 'Mozilla/5.0')]
-        html = opener.open(url_preffix.format(page))
-        txt = html.read()
+        #opener = urllib2.build_opener()
+        #opener.addheaders = [('User-agent', 'Mozilla/5.0')]
+	txt = ""
+	while(True):
+		time.sleep(1)
+		try:
+        		html = opener.open(url_preffix.format(page))
+        		txt = html.read()
+			break
+		except:
+			print "still wait"
+			pass
         soup = BeautifulSoup(txt, 'html.parser')
         links = soup.findAll('a', class_='nbg')
         if not links:
