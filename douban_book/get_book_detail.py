@@ -66,14 +66,24 @@ def getCountry2(name):
 def getAuthor(info):
 	name = info.find(text=' 作者')
 	try:
-		return name.parent.next_sibling.next_sibling.get_text().strip()
+		t_span = name.parent.parent
+    	item = t_span.findAll('a')
+    	list_t = []
+    	for i in item:
+    		 list_t.append(i.get_text())
+        return ",".join(list_t)
 	except:
 		return ""
 
 def getTranslator(info):
 	name = info.find(text=' 译者')
 	try:
-		return name.parent.next_sibling.next_sibling.get_text().strip()
+        t_span = name.parent.parent
+    	item = t_span.findAll('a')
+    	list_t = []
+    	for i in item:
+    		 list_t.append(i.get_text())
+        return ",".join(list_t)
 	except:
 		return ""
 

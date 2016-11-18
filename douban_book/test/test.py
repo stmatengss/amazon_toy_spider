@@ -44,21 +44,28 @@ def getCountry2(name):
 
 def getAuthor(info):
 	name = info.find(text=' 作者')
-	try:
-		print name.parent.next_sibling.next_sibling.get_text().strip()
-		return name.parent.next_sibling.next_sibling.get_text().strip()
-	except:
-		print "无作者"
-		return ""
+	t_span = name.parent.parent
+	item = t_span.findAll('a')
+	list_t = []
+	for i in item:
+		 list_t.append(i.get_text())
+	print ",".join(list_t)
 
 def getTranslator(info):
 	name = info.find(text=' 译者')
-	try:
-		print name.parent.next_sibling.next_sibling.get_text().strip()
-		return name.parent.next_sibling.next_sibling.get_text().strip()
-	except:
-		print "无译者"
-		return ""
+	print name
+	#try:
+	t_span = name.parent.parent
+	item = t_span.findAll('a')
+	list_t = []
+	for i in item:
+		 list_t.append(i.get_text())
+		#print name.parent.next_sibling.next_sibling.get_text().strip()
+		#return name.parent.next_sibling.next_sibling.get_text().strip()
+	#except:
+	#	print "无译者"
+	#	return ""
+	print ",".join(list_t)
 
 def getPublication(info):
 	pub = info.find(text='出版社:')
@@ -134,7 +141,7 @@ def getISBN(info):
 
 def getinfo(soup):
 	info = soup.find(id = 'info')
-	getISBN(info)
+	#getISBN(info)
 	#getSeries(info)
 	#getPrice(info)
 	#getPages(info)
@@ -143,7 +150,7 @@ def getinfo(soup):
 	#getRawTitle(info)
 	#getPublication(info)
 	#getAuthor(info)
-	#getTranslator(info)
+	getTranslator(info)
 
 def getContent(soup):
 	content_intro = soup.find(id = 'link-report')
@@ -222,8 +229,8 @@ for i in links_set:
 		continue
 	soup = BeautifulSoup(txt, 'html.parser')
 	info = soup.find(id = 'info')
-	isbn = getISBN(info)
-	getPic(soup, isbn)
+	isbn = getPages(info)
+	#getPic(soup, isbn)
 
 
 
