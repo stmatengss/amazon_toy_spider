@@ -23,7 +23,7 @@ def getTitle(soup):
 	return soup.title.string.replace("(豆瓣)",'')
 
 def getCountry1(name):
-	pattern = re.compile(r'\((.+)\)')
+	pattern = re.compile(r'\((.+?)\)')
 	match = pattern.match(name)
 	if match:
 		print match.group(1)
@@ -33,7 +33,7 @@ def getCountry1(name):
 		return ""
 
 def getCountry2(name):
-	pattern = re.compile(r'\[(.+)\]')
+	pattern = re.compile(r'\[(.+?)\]')
 	match = pattern.match(name)
 	if match:
 		print match.group(1)
@@ -42,14 +42,25 @@ def getCountry2(name):
 		print "no country"
 		return ""
 
+def getCountry(name):
+    country = getCountry1(name)
+    if country:
+        return country
+    else:
+        country = getCountry2(name)
+        return country
+
 def getAuthor(info):
 	name = info.find(text=' 作者')
 	t_span = name.parent.parent
 	item = t_span.findAll('a')
 	list_t = []
 	for i in item:
-		 list_t.append(i.get_text())
+		list_t.append(i.get_text().strip())
+
 	print ",".join(list_t)
+	return ",".join(list_t)
+
 
 def getTranslator(info):
 	name = info.find(text=' 译者')
@@ -229,8 +240,9 @@ for i in links_set:
 		continue
 	soup = BeautifulSoup(txt, 'html.parser')
 	info = soup.find(id = 'info')
-	isbn = getPages(info)
-	#getPic(soup, isbn)
+	name = getAuthor(info)
+	getCountry(name)
+	getPic(soup, 234567)
 
 
 
