@@ -19,6 +19,11 @@ links_set = fout.readlines()
 pass_count = 0
 cu_count = 0
 
+def cleanStr(in_str):
+    cleanr = re.compile('<.*?>')
+    cleantext = re.sub(cleanr, '', in_str)
+    return cleantext
+
 def getISBN(p_info):
 	if p_info:
 		li_list = p_info.findAll("li")
@@ -43,62 +48,72 @@ def getDetailDescripe(soup):
 	getISBN(p_info)
 
 def getTitle(soup):
-	name_tag = soup.find("div", class_="name_info")
-	if name_tag:
-		title_tag = name_tag.find("h1")
-		if title_tag:
-			try:
-				title = title_tag.get_text().strip()
-				print title
-				return title
-			except:
+    name_tag = soup.find("div", class_="name_info")
+    if name_tag:
+        title_tag = name_tag.find("h1")
+        if title_tag:
+            try:
+                title = title_tag.get_text().strip()
+                print str(title)
+                return str(title)
+            except:
 				return ""
-		else:
-			return ""
-	else:
-		return ""
+        else:
+            return ""
+    else:
+        return ""
+
+def getComment(soup):
+    name_tag = soup.find("div", class_="name_info")
+    if name_tag:
+        content_tag = name_tag.find("h2")
+        if content_tag:
+            try:
+                content = content_tag.get_text().strip()
+                print str(content)
+                return str(content)
+            except:
+                return ""
+        else:
+            return ""
+    else:
+        return ""
+
+
 
 def getContent(soup):
-	content_tag = soup.find(id="content-show-all")
-	print content_tag
+	content_tag = soup.find(id="content")
 	if content_tag:
-		dsc_tag = content_tag.find(id="content-show-all")
+		dsc_tag = content_tag.find(id="content-textarea")
 		if not dsc_tag:
 			dsc_tag = content_tag.find("div", class_="descrip")
 		try:
 			content = dsc_tag.get_text().strip()
-			print content
-			return content
+			print cleanStr(str(content))
+			return cleanStr(str(content))
 		except:
-			print "1"
 			return ""
 	else:
-		print "2"
 		return ""
 
+if 'linux' in sys.platform:
+    dryscrape.start_xvfb()
 
 for i in links_set:
-	print "------------------------------------"
-	print i
-	txt = ""
-	try:
-		#opener = urllib2.build_opener()
-		#opener.addheaders = [('User-agent', 'Mozilla/5.0')]
-		#html = opener.open(i)
-		session = dryscrape.Session()
-		session.visit(i)
-		response = session.body()
-		soup = BeautifulSoup(response)
-	except:
-		pass_count = pass_count + 1
-		print "pass"
-		continue
-	#soup = BeautifulSoup(txt, 'html.parser')
-	test_log.write(txt)
+    print "------------------------------------"
+    print i
+    txt = ""
+    session = dryscrape.Session()
+    session.set_attribute('auto_load_images', False)
+    session.visit(i)
+    response = session.body()
+    soup = BeautifulSoup(response, "lxml")
+    test_log.write(txt)
 	#print soup
-	#getDetailDescripe(soup)
-	getTitle(soup)
-	getContent(soup)
+    #getDetailDescripe(soup)
+    #getTitle(soup)
+    #getContent(soup)
+    getComment(soup)
 
 test_log.close()
 result = "pass number : " + str(pass_count)
