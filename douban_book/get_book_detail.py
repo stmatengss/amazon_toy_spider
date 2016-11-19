@@ -14,7 +14,7 @@ import re
 
 fout = file("douban_list_new.txt", 'r')
 links_set = fout.readlines()
-csvfile = file('douban_book_new.csv', 'wb')
+csvfile = file('douban_book_new_test.csv', 'w')
 log_file = file('douban_book_new.log', 'w')
 pass_link = file('pass_link_new.txt', 'w')
 csvfile.write(codecs.BOM_UTF8)
@@ -24,8 +24,8 @@ cu_count = 0
 
 contents_need = ['isbn', 'figure', 'title', 'content_into', 'rate_num', 'brand' , 'series', 'author', 'author_origin', 'author_country', 'tranlator', 'publicator', 'author_prize', 'book_prize', 'raw_title', 'age', 'responsibility', 'lan', 'words', 'size', 'binding', 'pub_date', 'pub_times', 'pages', 'price', 'editor_reco', 'media_reco', 'author_intro', 'douban_rating']
 
-line1 = ['ISBN', '封面图', '绘本名称', '内容', '评论', '图书品牌', '图书套装', '作者', '作者原名', '作者国别', '译者', '出版社', '作者获奖经历', '绘本获奖经历', '绘本原作名', '适合年龄', '责任编辑', '正文语种', '字数', '开本', '装帧', '出版时间', '版次', '页数/页', '定价/元', '编辑推荐', '媒体推荐', '作者简介', '豆瓣评分']
-writer.writerow(line1)
+#line1 = ['ISBN', '封面图', '绘本名称', '内容', '评论', '图书品牌', '图书套装', '作者', '作者原名', '作者国别', '译者', '出版社', '作者获奖经历', '绘本获奖经历', '绘本原作名', '适合年龄', '责任编辑', '正文语种', '字数', '开本', '装帧', '出版时间', '版次', '页数/页', '定价/元', '编辑推荐', '媒体推荐', '作者简介', '豆瓣评分']
+#writer.writerow(line1)
 
 print len(contents_need)
 
@@ -215,25 +215,14 @@ def write2line(lines_map):
         line.append(lines_map[contents_need[i]])
     return line
 
+lins_set = links_set[1982:]
+
 for i in links_set:
     print "------------------------------------"
     print i
     log_file.write(i)
     txt = ""
-    '''
-    try:
-        opener = urllib2.build_opener()
-        opener.addheaders = [('User-agent', 'Mozilla/5.0')]
-        html = opener.open(i)
-        txt = html.read()
-    except:
-        log_file.write(txt)
-        pass_link.write(i)
-        pass_count = pass_count + 1
-        print "pass"
-        continue
-    '''
-    interv = 0
+    interv = 1
     while(True):
         time.sleep(interv)
         try:
@@ -243,8 +232,9 @@ for i in links_set:
             txt = html.read()
             break
         except:
-            interv = interv * 2 + 1
+            interv = interv * 2
             log_file.write("waite interval " + str(interv))
+            print "waite interval " + str(interv)
             pass_link.write(i)
             pass
     soup = BeautifulSoup(txt, 'html.parser')
@@ -260,6 +250,8 @@ for i in links_set:
     line.append(i)
     writer.writerow(line)
     cu_count = cu_count + 1
+    if cu_count == 10:
+        break
 
 
 result = "pass number : " + str(pass_count)

@@ -21,17 +21,19 @@ for url_preffix in url_list:
         page = i * 20
         log = url_preffix.format(page)
         print(log)
-        #opener = urllib2.build_opener()
-        #opener.addheaders = [('User-agent', 'Mozilla/5.0')]
+        opener = urllib2.build_opener()
+        opener.addheaders = [('User-agent', 'Mozilla/5.0')]
 	txt = ""
+	interv = 1
 	while(True):
-		time.sleep(1)
+		time.sleep(interv)
 		try:
         		html = opener.open(url_preffix.format(page))
         		txt = html.read()
 			break
 		except:
-			print "still wait"
+			interv = interv * 2
+			print "still wait" + str(interv)
 			pass
         soup = BeautifulSoup(txt, 'html.parser')
         links = soup.findAll('a', class_='nbg')
