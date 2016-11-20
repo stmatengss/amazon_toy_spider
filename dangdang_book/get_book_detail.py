@@ -309,7 +309,8 @@ for i in links_set:
             driver.get(i)
             response = driver.page_source
         except:
-            print "Unexpected error:", sys.exc_info()[0] + "wait time :" + str(wait_time)
+            print "Unexpected error:", sys.exc_info()[0]
+            print "wait time :" + str(wait_time)
             wait_time = wait_time * 2
             pass
     if not response:
