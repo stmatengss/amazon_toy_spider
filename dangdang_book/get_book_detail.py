@@ -347,6 +347,7 @@ for i in links_set:
     line.append(i)
     writer.writerow(line)
     cu_count = cu_count + 1
+    print cu_count
     if cu_count > 100:
         break
 
