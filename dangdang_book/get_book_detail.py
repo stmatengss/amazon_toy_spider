@@ -179,7 +179,7 @@ def getAuthorAndTrans(soup):
                             author = author + previous + content
                             previous = ""
                         else:
-                            previous = previous + ", " + content
+                            previous = previous + " " + content
             else:
                 content = str(item_l.get_text()).strip()
                 previous = previous + content
