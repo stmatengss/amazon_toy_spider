@@ -298,14 +298,14 @@ if 'linux' in sys.platform:
     dryscrape.start_xvfb()
 
 log_file.write("null link")
-session = dryscrape.Session()
-session.set_attribute('auto_load_images', False)
 
 for i in links_set:
     print "------------------------------------"
     print i
     txt = ""
     try:
+        session = dryscrape.Session()
+        session.set_attribute('auto_load_images', False)
         session.visit(i)
         response = session.body()
     except:
