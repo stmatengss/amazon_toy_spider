@@ -302,6 +302,7 @@ for i in links_set:
     print "------------------------------------"
     print i
     txt = ""
+    wait_time = 1
     while(True):
         time.sleep(wait_time)
         try:
