@@ -302,13 +302,15 @@ for i in links_set:
     print "------------------------------------"
     print i
     txt = ""
-    try:
-        driver.get(i)
-        response = driver.page_source
-    except:
-        print "Unexpected error:", sys.exc_info()[0]
-        pass_file.write(i + "\n")
-        continue
+    while(True):
+        time.sleep(wait_time)
+        try:
+            driver.get(i)
+            response = driver.page_source
+        except:
+            print "Unexpected error:", sys.exc_info()[0] + "wait time :" + str(wait_time)
+            wait_time = wait_time * 2
+            pass
     if not response:
         print "null"
         pass_file.write(i + "       null \n")
