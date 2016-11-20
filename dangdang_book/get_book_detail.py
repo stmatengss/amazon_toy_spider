@@ -147,14 +147,12 @@ def getCountry(soup):
         name = str(name_tag.get_text()).strip().replace("作者:", "")
     pattern1 = re.compile(r'.*\【(.+?)\】.*')
     pattern2 = re.compile(r'.*\[(.+?)\].*')
-    match = pattern2.match(disAuthor)
+    match = pattern2.match(name)
     if match:
-        print match.group(1)
         return match.group(1)
     else:
-        match = pattern1.match(disAuthor)
+        match = pattern1.match(name)
         if match:
-            print match.group(1)
             return match.group(1)
         else:
             return ""
@@ -197,7 +195,6 @@ def getPublicator(soup):
     if pub_tag:
         pub_a = pub_tag.find("a")
         if pub_a:
-            print str(pub_a.get_text()).strip()
             return str(pub_a.get_text()).strip()
         return ""
     else:
@@ -206,7 +203,6 @@ def getPublicator(soup):
 def getPrice(soup):
     price_tag = soup.find(id="dd-price")
     if price_tag:
-        print str(price_tag.get_text()).strip()
         return str(price_tag.get_text()).strip()
     else:
         return ""
@@ -222,7 +218,6 @@ def getEditorReco(soup):
             dis_tag = abstract_tag.find("div", class_="descrip")
             if dis_tag:
                 editor_reco = str(dis_tag.get_text()).strip()
-    print editor_reco
     return editor_reco
 
 def getMediaReco(soup):
@@ -233,7 +228,6 @@ def getMediaReco(soup):
             media_tag = content_tag.find("div", class_="descrip")
         try:
             content = media_tag.get_text().strip()
-            print cleanStr(str(content))
             return cleanStr(str(content))
         except:
             return ""
@@ -248,7 +242,6 @@ def getAuthorIntro(soup):
             media_tag = content_tag.find("div", class_="descrip")
         try:
             content = media_tag.get_text().strip()
-            print cleanStr(str(content))
             return cleanStr(str(content))
         except:
             return ""
@@ -258,7 +251,6 @@ def getAuthorIntro(soup):
 def getReviwsNumber(soup):
     num_tag = soup.find(id="comm_num_down")
     if num_tag:
-        print str(num_tag.get_text()).strip()
         return str(num_tag.get_text()).strip()
     else:
         return ""
@@ -266,7 +258,6 @@ def getReviwsNumber(soup):
 def getRank(soup):
     rank_tag = soup.find("span", {"dd_name": "图书排行榜排名"})
     if rank_tag:
-        print str(rank_tag.get_text()).strip()
         return str(rank_tag.get_text()).strip()
     else:
         return ""
