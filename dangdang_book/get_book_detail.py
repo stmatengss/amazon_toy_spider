@@ -14,11 +14,12 @@ import re
 import dryscrape
 
 # 0:0-1, 1:3-6
-option = 1
+option = 0
 file_name = ["dangdang_list_02.txt", "dangdang_list_36.txt"]
 age = ["0-2", "3-6"]
 output_csv = ["dangdang_book_02.csv", "dangdang_book_36.csv"]
 log_name = ["dangdang_book_02.log", "dangdang_book_36.log"]
+pass_file_name = ["pass_url_02.txt", "pass_url_02_.txt"]
 
 
 
@@ -30,6 +31,8 @@ csvfile.write(codecs.BOM_UTF8)
 writer = csv.writer(csvfile)
 
 log_file = file(log_name[option], 'w')
+
+pass_file = file(pass_file_name[option], 'w')
 
 
 cu_count = 0
@@ -301,11 +304,17 @@ for i in links_set:
     txt = ""
     session = dryscrape.Session()
     session.set_attribute('auto_load_images', False)
-    session.visit(i)
+    try:
+        session.visit(i)
+    except:
+        print "open failed"
+        pass_file.write(i + "\n")
+        continue
     response = session.body()
     if not response:
         print "null"
-        log_file.write(i + "\n")
+        pass_file.write(i + "       null \n")
+        continue
     soup = BeautifulSoup(response, "lxml")
     lines_map = initMap()
     [series, isbn, pub_times, pages, words, pub_date, size, binding] = getDetailDescripe(soup)
@@ -342,3 +351,4 @@ for i in links_set:
 fout.close()
 csvfile.close()
 log_file.close()
+pass_file.close()
