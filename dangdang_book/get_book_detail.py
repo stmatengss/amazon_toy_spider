@@ -13,11 +13,30 @@ import time
 import re
 import dryscrape
 
-fout = file("test_list.txt", 'r')
-test_log = file("test.log.txt", 'w')
+# 0:0-1, 1:3-6
+option = 0
+file_name = ["dangdang_list02.txt", "dangdang_list36.txt"]
+age = ["0-2", "3-6"]
+output_csv = ["dangdang_book_02.csv", "dangdang_book_36.csv"]
+log_name = ["dangdang_book_02.log", "dangdang_book_36.log"]
+
+
+
+fout = file(file_name[option], 'r')
 links_set = fout.readlines()
-pass_count = 0
+
+csvfile = file(output_csv[option], 'w')
+csvfile.write(codecs.BOM_UTF8)
+writer = csv.writer(csvfile)
+
+log_file = file(log_name[option], 'w')
+
+
 cu_count = 0
+
+contents_need = ['isbn', 'pic', 'title', 'con_reco', 'comment', 'brand' , 'series', 'author', 'author_origin', 'author_country', 'translator', 'publicator', 'author_prize', 'book_prize', 'raw_title', 'age', 'responsibility', 'lan', 'words', 'size', 'binding', 'pub_date', 'pub_times', 'pages', 'price', 'editor_reco', 'media_reco', 'author_intro', 'review_num', 'dangdang_rank']
+line1 = ['ISBN', '封面图', '绘本名称', '内容', '评论', '图书品牌', '图书套装', '作者', '作者原名', '作者国别', '译者', '出版社', '作者获奖经历', '绘本获奖经历', '绘本原作名', '适合年龄', '责任编辑', '正文语种', '字数', '开本', '装帧', '出版时间', '版次', '页数/页', '定价/元', '编辑推荐', '媒体推荐', '作者简介', '当当评论数', '当当童书排名']
+writer.writerow(line1)
 
 def cleanStr(in_str):
     cleanr = re.compile('<.*?>')
@@ -64,7 +83,7 @@ def getDetailDescripe(soup):
                         continue
                     if item_str.find("丛书名") > -1:
                         series = item_str.replace("丛书名：", "")
-                print [series, isbn, pub_times, pages, words, pub_date, size, binding]
+                #print [series, isbn, pub_times, pages, words, pub_date, size, binding]
                 return [series, isbn, pub_times, pages, words, pub_date, size, binding]
             except:
                 pass
@@ -82,7 +101,6 @@ def getTitle(soup):
         if title_tag:
             try:
                 title = title_tag.get_text().strip()
-                print str(title)
                 return str(title)
             except:
 				return ""
@@ -98,7 +116,6 @@ def getComment(soup):
         if content_tag:
             try:
                 content = content_tag.get_text().strip()
-                print str(content)
                 return str(content)
             except:
                 return ""
@@ -117,7 +134,6 @@ def getContent(soup):
 			dsc_tag = content_tag.find("div", class_="descrip")
 		try:
 			content = dsc_tag.get_text().strip()
-			print cleanStr(str(content))
 			return cleanStr(str(content))
 		except:
 			return ""
@@ -262,21 +278,40 @@ def getRank(soup):
     else:
         return ""
 
-def getPic(soup, isbn):
+def getPic(soup, lines_map):
+    lines_map[contents_need[1]] = "miss"
+    if not lines_map["isbn"]:
+        return
     img_tag = soup.find(id="largePic")
     if img_tag:
         img_h = str(img_tag["src"])
         if img_h:
-            file_name = "./img/" + isbn + ".jpg"
+            file_name = "./img/" + lines_map["isbn"] + ".jpg"
             try:
                 urllib.urlretrieve(img_h, file_name)
+                lines_map[contents_need[1]] = "ok"
             except:
                 print "get pic error"
+
+def initMap():
+    lines_map = {}
+    c_len = len(contents_need)
+    for i in range(0, c_len):
+        lines_map[contents_need[i]] = ''
+    lines_map['age'] = age[option]
+    return lines_map
+
+def write2line(lines_map):
+    line = []
+    c_len = len(contents_need)
+    for i in range(0, c_len):
+        line.append(lines_map[contents_need[i]])
+    return line
 
 if 'linux' in sys.platform:
     dryscrape.start_xvfb()
 
-test_count = 0
+log_file.write("null link")
 
 for i in links_set:
     print "------------------------------------"
@@ -286,13 +321,40 @@ for i in links_set:
     session.set_attribute('auto_load_images', False)
     session.visit(i)
     response = session.body()
+    if not response:
+        print "null"
+        log_file.write(i + "\n")
     soup = BeautifulSoup(response, "lxml")
-    test_log.write(txt)
-    #getDetailDescripe(soup)
-    getPic(soup, str(test_count))
-    test_count = test_count + 1
-
-test_log.close()
-result = "pass number : " + str(pass_count)
+    lines_map = initMap()
+    [series, isbn, pub_times, pages, words, pub_date, size, binding] = getDetailDescripe(soup)
+    lines_map[contents_need[6]] = series
+    lines_map[contents_need[0]] = isbn
+    lines_map[contents_need[22]] = pub_times
+    lines_map[contents_need[23]] = pages
+    lines_map[contents_need[18]] = words
+    lines_map[contents_need[21]] = pub_date
+    lines_map[contents_need[19]] = size
+    lines_map[contents_need[20]] = binding
+    getPic(soup, lines_map)
+    lines_map[contents_need[2]] = getTitle(soup)
+    lines_map[contents_need[3]] = getContent(soup)
+    lines_map[contents_need[4]] = getComment(soup)
+    [author, translator] = getAuthorAndTrans(soup)
+    lines_map[contents_need[7]] = author
+    lines_map[contents_need[10]] = translator
+    lines_map[contents_need[9]] = getCountry(soup)
+    lines_map[contents_need[11]] = getPublicator(soup)
+    lines_map[contents_need[24]] = getPrice(soup)
+    lines_map[contents_need[25]] = getEditorReco(soup)
+    lines_map[contents_need[26]] = getMediaReco(soup)
+    lines_map[contents_need[27]] = getAuthorIntro(soup)
+    lines_map[contents_need[28]] = getReviwsNumber(soup)
+    lines_map[contents_need[29]] = getRank(soup)
+    line = write2line(lines_map)
+    line.append(i)
+    writer.writerow(line)
+    cu_count = cu_count + 1
 
 fout.close()
+csvfile.close()
+log_file.close()
