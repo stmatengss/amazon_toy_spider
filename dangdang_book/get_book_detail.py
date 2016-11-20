@@ -147,15 +147,13 @@ def getCountry(soup):
         name = str(name_tag.get_text()).strip().replace("作者:", "")
     pattern1 = re.compile(r'.*\【(.+?)\】.*')
     pattern2 = re.compile(r'.*\[(.+?)\].*')
-    match = pattern2.match(name)
-    if match:
-        return match.group(1)
-    else:
-        match = pattern1.match(name)
+    pattern3 = re.compile(r'.*\（(.+?)\）.*')
+    pattern_list = [pattern1, pattern2, pattern3]
+    for pattern in pattern_list:
+        match = pattern.match(name)
         if match:
             return match.group(1)
-        else:
-            return ""
+    return ""
 
 def getAuthorAndTrans(soup):
     name_tag = soup.find(id="author")
@@ -177,7 +175,7 @@ def getAuthorAndTrans(soup):
                     if content.find("作者") > -1:
                         previous = previous + content.replace("作者:", "")
                     else:
-                        if content:
+                        if content or content.find("， ") == -1:
                             author = author + previous + content
                             previous = ""
                         else:
