@@ -146,6 +146,7 @@ def getContent(soup):
 def getCountry(soup):
     name_tag = soup.find(id="author")
     disAuthor = ""
+    name = ""
     if name_tag:
         name = str(name_tag.get_text()).strip().replace("作者:", "")
     pattern1 = re.compile(r'.*\【(.+?)\】.*')
