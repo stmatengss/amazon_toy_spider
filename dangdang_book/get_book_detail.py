@@ -307,11 +307,11 @@ for i in links_set:
     session.set_attribute('auto_load_images', False)
     try:
         session.visit(i)
+        response = session.body()
     except:
         print "open failed"
         pass_file.write(i + "\n")
         continue
-    response = session.body()
     if not response:
         print "null"
         pass_file.write(i + "       null \n")
