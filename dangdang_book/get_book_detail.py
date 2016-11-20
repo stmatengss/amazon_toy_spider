@@ -11,7 +11,7 @@ import csv
 import codecs
 import time
 import re
-import dryscrape
+from selenium import webdriver
 
 # 0:0-1, 1:3-6
 option = 0
@@ -294,24 +294,20 @@ def write2line(lines_map):
         line.append(lines_map[contents_need[i]])
     return line
 
-if 'linux' in sys.platform:
-    dryscrape.start_xvfb()
+driver = webdriver.PhantomJS()
+driver.set_window_size(1120, 550)
 
 log_file.write("null link")
-session = dryscrape.Session()
-session.set_attribute('auto_load_images', False)
 for i in links_set:
     print "------------------------------------"
     print i
     txt = ""
     try:
-        session.visit(i)
-        response = session.body()
+        driver.get(i)
+        response = driver.page_source
     except:
-        print "open failed"
+        print "Unexpected error:", sys.exc_info()[0]
         pass_file.write(i + "\n")
-        session = dryscrape.Session()
-        session.set_attribute('auto_load_images', False)
         continue
     if not response:
         print "null"
@@ -351,6 +347,7 @@ for i in links_set:
     if cu_count > 100:
         break
 
+driver.quit()
 fout.close()
 csvfile.close()
 log_file.close()
