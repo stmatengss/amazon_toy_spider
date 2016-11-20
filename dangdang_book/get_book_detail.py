@@ -354,6 +354,8 @@ for i in links_set:
     line.append(i)
     writer.writerow(line)
     cu_count = cu_count + 1
+    if cu_count == 10:
+        break
 
 fout.close()
 csvfile.close()
