@@ -15,7 +15,7 @@ import dryscrape
 
 # 0:0-1, 1:3-6
 option = 0
-file_name = ["dangdang_list02.txt", "dangdang_list36.txt"]
+file_name = ["dangdang_list_02.txt", "dangdang_list_36.txt"]
 age = ["0-2", "3-6"]
 output_csv = ["dangdang_book_02.csv", "dangdang_book_36.csv"]
 log_name = ["dangdang_book_02.log", "dangdang_book_36.log"]
