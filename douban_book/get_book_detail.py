@@ -14,7 +14,7 @@ import re
 
 fout = file("douban_list_new.txt", 'r')
 links_set = fout.readlines()
-csvfile = file('douban_book_new_test.csv', 'w')
+csvfile = file('douban_book_new.csv', 'a')
 log_file = file('douban_book_new.log', 'w')
 pass_link = file('pass_link_new.txt', 'w')
 csvfile.write(codecs.BOM_UTF8)
@@ -201,12 +201,18 @@ def getRating(soup):
 	else:
 		return ""
 
-def getPic(soup, ibsn):
+def getPic(soup, ibsn, line_map):
 	pic = soup.find('a', class_='nbg')
 	if pic:
-		pic_h = pic['href']
-		file_name = "./img/" + str(ibsn) + ".jpg"
-		urllib.urlretrieve(pic_h, file_name)
+		try:
+			pic_h = pic['href']
+			file_name = "./img/" + str(ibsn) + ".jpg"
+			urllib.urlretrieve(pic_h, file_name)
+			line_map[1] = "ok"
+		except:
+			line_map[1] = "miss"
+			pass
+			
 
 def write2line(lines_map):
     line = []
@@ -215,7 +221,7 @@ def write2line(lines_map):
         line.append(lines_map[contents_need[i]])
     return line
 
-lins_set = links_set[1982:]
+lins_set = links_set[1992:]
 
 for i in links_set:
     print "------------------------------------"
@@ -245,13 +251,11 @@ for i in links_set:
     line_map[contents_need[4]] = getRatingPeople(soup)
     line_map[contents_need[27]] = getAuthorIntro(soup)
     line_map[contents_need[28]] = getRating(soup)
-    getPic(soup, line_map[contents_need[0]])
+    getPic(soup, line_map[contents_need[0]], line_map)
     line = write2line(line_map)
     line.append(i)
     writer.writerow(line)
     cu_count = cu_count + 1
-    if cu_count == 10:
-        break
 
 
 result = "pass number : " + str(pass_count)
