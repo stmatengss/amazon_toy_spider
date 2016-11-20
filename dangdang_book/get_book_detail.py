@@ -203,6 +203,9 @@ def getPublicator(soup):
         return ""
 
 def getPrice(soup):
+    o_price_tag = soup.find(id="original-price")
+    if o_price_tag:
+        return str(o_price_tag.get_text()).strip()
     price_tag = soup.find(id="dd-price")
     if price_tag:
         return str(price_tag.get_text()).strip()
@@ -296,7 +299,6 @@ def write2line(lines_map):
 
 driver = webdriver.PhantomJS()
 driver.set_window_size(1120, 550)
-
 log_file.write("null link")
 for i in links_set:
     print "------------------------------------"
