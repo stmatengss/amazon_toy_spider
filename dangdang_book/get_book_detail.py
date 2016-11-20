@@ -140,18 +140,11 @@ def getContent(soup):
 	else:
 		return ""
 
-def getDisAuthor(soup):
+def getCountry(soup):
     name_tag = soup.find(id="author")
+    disAuthor = ""
     if name_tag:
-        try:
-            name = str(name_tag.get_text()).strip().replace("作者:", "")
-            return name
-        except:
-            return ""
-    else:
-        return ""
-
-def getCountry(disAuthor):
+        name = str(name_tag.get_text()).strip().replace("作者:", "")
     pattern1 = re.compile(r'.*\【(.+?)\】.*')
     pattern2 = re.compile(r'.*\[(.+?)\].*')
     match = pattern2.match(disAuthor)
