@@ -175,7 +175,7 @@ def getAuthorAndTrans(soup):
                     if content.find("作者") > -1:
                         previous = previous + content.replace("作者:", "")
                     else:
-                        if content or content.find("， ") == -1:
+                        if content and content != "，":
                             author = author + previous + content
                             previous = ""
                         else:
